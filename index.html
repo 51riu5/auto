@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Experience authentic Kerala auto-rickshaw negotiations in VR! Practice haggling with AI-powered drivers in immersive 3D environments featuring Kochi Airport, MG Road, and local routes.">
+    <meta name="keywords" content="VR, Kerala, auto-rickshaw, negotiation, AI, WebVR, immersive, India, travel simulator, haggling, cultural experience">
+    <meta name="author" content="Auto-Rickshaw VR Simulator">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph (Facebook/LinkedIn) -->
+    <meta property="og:title" content="Auto-Rickshaw Negotiation Simulator VR - Kerala Experience">
+    <meta property="og:description" content="Master the art of Kerala auto-rickshaw negotiations in immersive VR with AI-powered drivers! From Kochi Airport to local routes.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://auto-rickshaw-vr.netlify.app">
+    <meta property="og:site_name" content="Auto-Rickshaw VR Simulator">
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Auto-Rickshaw Negotiation Simulator VR">
+    <meta name="twitter:description" content="Experience authentic Kerala auto-rickshaw negotiations in VR with AI drivers!">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Auto-Rickshaw VR">
+    
+    <title>Auto-Rickshaw Negotiation Simulator - Kerala VR Experience</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/enhanced-features.css">
+</head>
+<body>
+    <!-- UI Overlay -->
+    <div id="ui-overlay">
+        <div id="start-screen" class="screen active">
+            <h1>🛺 Auto-Rickshaw Negotiation Simulator</h1>
+            <p>Practice your haggling skills in Kerala!</p>
+            <div class="location-select">
+                <h3>Choose Your Challenge:</h3>
+                <button class="location-btn" data-location="airport">
+                    🛫 Kochi Airport (Nightmare Mode)
+                </button>
+                <button class="location-btn" data-location="railway">
+                    🚂 Ernakulam Railway Station (Hard)
+                </button>
+                <button class="location-btn" data-location="market">
+                    🏪 Broadway Market (Medium)
+                </button>
+                <button class="location-btn" data-location="residential">
+                    🏘️ Residential Area (Easy)
+                </button>
+                <button class="location-btn" data-location="uncle">
+                    👨‍🦳 Local Uncle Who Knows Your Family (Tutorial)
+                </button>
+            </div>
+            <button id="start-vr">Enter VR Experience</button>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div id="location-info">
+                <h2 id="location-name"></h2>
+                <div id="difficulty-indicator"></div>
+            </div>
+            
+            <div id="negotiation-panel">
+                <!-- Conversation History -->
+                <div id="conversation-history">
+                    <div class="conversation-scroll">
+                        <div id="conversation-messages"></div>
+                    </div>
+                </div>
+                
+                <!-- Current Driver Response -->
+                <div id="driver-dialogue">
+                    <div id="driver-avatar">🧔</div>
+                    <div id="driver-speech">Welcome! Where would you like to go?</div>
+                    <div id="typing-indicator" class="hidden">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+                
+                <!-- Player Input -->
+                <div id="player-input-section">
+                    <div id="input-container">
+                        <input type="text" id="player-input" placeholder="Type your response... (e.g., 'Uncle, can you give me a good rate?')" maxlength="200">
+                        <button id="send-btn" disabled>Send</button>
+                    </div>
+                    <div id="suggestion-chips">
+                        <button class="suggestion-chip" data-text="Uncle, can you reduce the price?">😊 Polite</button>
+                        <button class="suggestion-chip" data-text="I know the meter rate is much less">💪 Assertive</button>
+                        <button class="suggestion-chip" data-text="Chettan, I'm a local person">🏛️ Cultural</button>
+                        <button class="suggestion-chip" data-text="I'll find another auto if needed">🚶 Walk Away</button>
+                    </div>
+                </div>
+                
+                <!-- Negotiation Stats -->
+                <div id="negotiation-stats">
+                    <div class="stat">
+                        <span>Initial Price:</span>
+                        <span id="initial-price">₹0</span>
+                    </div>
+                    <div class="stat">
+                        <span>Current Offer:</span>
+                        <span id="current-price">₹0</span>
+                    </div>
+                    <div class="stat">
+                        <span>Fair Price:</span>
+                        <span id="fair-price">₹0</span>
+                    </div>
+                    <div class="stat">
+                        <span>Mood:</span>
+                        <span id="driver-mood">😐</span>
+                    </div>
+                    <div class="stat">
+                        <span>Round:</span>
+                        <span id="round-counter">1/8</span>
+                    </div>
+                    <div class="stat">
+                        <span>AI:</span>
+                        <span id="ai-status">Not configured</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="result-panel" class="hidden">
+                <h3 id="result-title"></h3>
+                <p id="result-message"></p>
+                <div id="score-details"></div>
+                <button id="play-again">Try Another Location</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VR Scene -->
+    <a-scene 
+        id="vr-scene" 
+        embedded 
+        style="height: 100vh; width: 100vw;"
+        vr-mode-ui="enabled: true"
+        device-orientation-permission-ui="enabled: false">
+        
+        <!-- Assets -->
+        <a-assets>
+            <a-mixin id="auto-rickshaw" 
+                geometry="primitive: box; width: 2; height: 1.5; depth: 3"
+                material="color: #FFD700; metalness: 0.1"></a-mixin>
+            
+            <a-mixin id="driver" 
+                geometry="primitive: sphere; radius: 0.3"
+                material="color: #8B4513"></a-mixin>
+                
+            <a-mixin id="wheel"
+                geometry="primitive: cylinder; radius: 0.3; height: 0.1"
+                material="color: #2F2F2F"></a-mixin>
+        </a-assets>
+
+        <!-- Environment -->
+        <a-entity id="environment" 
+            environment="preset: forest; groundColor: #445; grid: cross"></a-entity>
+
+        <!-- Auto-rickshaw -->
+        <a-entity id="auto-rickshaw" position="0 0.75 -3">
+            <!-- Main body -->
+            <a-box mixin="auto-rickshaw" position="0 0 0"></a-box>
+            
+            <!-- Wheels -->
+            <a-cylinder mixin="wheel" position="-0.8 -0.6 1" rotation="90 0 0"></a-cylinder>
+            <a-cylinder mixin="wheel" position="0.8 -0.6 1" rotation="90 0 0"></a-cylinder>
+            <a-cylinder mixin="wheel" position="0 -0.6 -1.2" rotation="90 0 0"></a-cylinder>
+            
+            <!-- Driver -->
+            <a-sphere id="driver" mixin="driver" position="-0.5 0.5 0.5">
+                <!-- Eyes -->
+                <a-sphere position="-0.1 0.1 0.25" geometry="primitive: sphere; radius: 0.05" material="color: white"></a-sphere>
+                <a-sphere position="0.1 0.1 0.25" geometry="primitive: sphere; radius: 0.05" material="color: white"></a-sphere>
+                <a-sphere position="-0.1 0.1 0.28" geometry="primitive: sphere; radius: 0.02" material="color: black"></a-sphere>
+                <a-sphere position="0.1 0.1 0.28" geometry="primitive: sphere; radius: 0.02" material="color: black"></a-sphere>
+            </a-sphere>
+            
+            <!-- Roof -->
+            <a-box position="0 0.8 0" geometry="primitive: box; width: 2.2; height: 0.1; depth: 3.2" 
+                material="color: #FFD700; metalness: 0.1"></a-box>
+        </a-entity>
+
+        <!-- Background buildings -->
+        <a-box position="-10 2 -10" geometry="primitive: box; width: 4; height: 4; depth: 2" 
+            material="color: #ff6b6b"></a-box>
+        <a-box position="15 3 -15" geometry="primitive: box; width: 6; height: 6; depth: 3" 
+            material="color: #4ecdc4"></a-box>
+        <a-box position="-8 1.5 5" geometry="primitive: box; width: 3; height: 3; depth: 2" 
+            material="color: #45b7d1"></a-box>
+
+        <!-- Lighting -->
+        <a-light type="ambient" color="#404040" intensity="0.4"></a-light>
+        <a-light type="directional" position="5 10 5" color="#ffffff" intensity="0.8"></a-light>
+
+        <!-- Camera -->
+        <a-entity id="rig" movement-controls position="0 1.6 0">
+            <a-entity id="camera" 
+                camera 
+                look-controls 
+                wasd-controls
+                position="0 0 0">
+                <a-cursor 
+                    cursor="fuse: true; fuseTimeout: 1500"
+                    position="0 0 -1"
+                    geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                    material="color: white; shader: flat"
+                    animation__click="property: scale; startEvents: click; easing: easeInCubic; dur: 150; from: 0.1 0.1 0.1; to: 1 1 1"
+                    animation__fusing="property: scale; startEvents: fusing; easing: easeInCubic; dur: 1500; from: 1 1 1; to: 0.1 0.1 0.1">
+                </a-cursor>
+            </a-entity>
+        </a-entity>
+
+        <!-- Sky -->
+        <a-sky color="#87CEEB"></a-sky>
+    </a-scene>
+
+    <!-- AI Configuration Modal -->
+    <div id="ai-config-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>🤖 AI Configuration</h2>
+            <p>For the best experience, configure an AI service for dynamic conversations:</p>
+            
+            <div class="ai-option">
+                <h3>🎯 Recommended: OpenAI (ChatGPT)</h3>
+                <input type="text" id="openai-key" placeholder="Enter your OpenAI API key">
+                <button onclick="configureAI('openai')">Use OpenAI</button>
+                <p class="ai-info">Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></p>
+            </div>
+            
+            <div class="ai-option">
+                <h3>🏠 Local: Ollama</h3>
+                <button onclick="configureAI('ollama')">Use Local Ollama</button>
+                <p class="ai-info">Requires Ollama running locally with llama2 model</p>
+            </div>
+            
+            <div class="ai-option">
+                <h3>🔄 Fallback: Pre-written Responses</h3>
+                <button onclick="configureAI('fallback')">Use Fallback Mode</button>
+                <p class="ai-info">Uses pre-written responses (still fun, but less dynamic)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Game HUD -->
+    <div class="game-hud">
+        <div class="left-hud">
+            <div id="weather-display" class="weather-display">
+                <span class="weather-icon">☀️</span>
+                <span class="weather-desc">Clear sunny day</span>
+            </div>
+        </div>
+        
+        <div class="center-hud">
+            <div id="time-display" class="time-display">
+                <span id="game-time">12:00</span>
+            </div>
+        </div>
+        
+        <div class="right-hud">
+            <div id="reputation-display" class="reputation-display" onclick="showReputationDetails()">
+                <span>⭐</span>
+                <span id="reputation-level">Beginner</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Controls -->
+    <div class="game-controls">
+        <button id="sound-toggle" class="control-btn" title="Toggle Sound">🔊</button>
+        <button id="shortcuts-toggle" class="control-btn" title="Show Shortcuts">⌨️</button>
+        <button id="achievements-btn" class="control-btn" title="Achievements">🏆</button>
+        <button id="leaderboard-btn" class="control-btn" title="Leaderboard">📊</button>
+        <button id="tutorial-btn" class="control-btn" title="Tutorial">🎓</button>
+        <button id="voice-toggle" class="control-btn" title="Voice Input">🎤</button>
+    </div>
+
+    <!-- Keyboard Shortcuts Display -->
+    <div id="keyboard-shortcuts" class="keyboard-shortcuts">
+        <div class="shortcut-item">
+            <span>Polite Response</span>
+            <span class="shortcut-key">1</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Assertive Response</span>
+            <span class="shortcut-key">2</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Cultural Response</span>
+            <span class="shortcut-key">3</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Walk Away</span>
+            <span class="shortcut-key">4</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Show Hint</span>
+            <span class="shortcut-key">H</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Toggle Sound</span>
+            <span class="shortcut-key">S</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Start Tutorial</span>
+            <span class="shortcut-key">T</span>
+        </div>
+    </div>
+
+    <!-- Achievements Modal -->
+    <div id="achievements-modal" class="leaderboard-modal">
+        <div class="leaderboard-content">
+            <button class="close-leaderboard" onclick="closeAchievements()">×</button>
+            <div class="leaderboard-header">
+                <h2 class="leaderboard-title">🏆 Achievements</h2>
+                <p class="leaderboard-subtitle">Your negotiation milestones</p>
+            </div>
+            <div id="achievements-list" class="achievements-grid">
+                <!-- Achievements will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboard-modal" class="leaderboard-modal">
+        <div class="leaderboard-content">
+            <button class="close-leaderboard" onclick="closeLeaderboard()">×</button>
+            <div class="leaderboard-header">
+                <h2 class="leaderboard-title">📊 Leaderboard</h2>
+                <p class="leaderboard-subtitle">Top Auto Negotiators</p>
+            </div>
+            <ul id="leaderboard-list" class="leaderboard-list">
+                <!-- Leaderboard will be populated by JavaScript -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Statistics Modal -->
+    <div id="stats-modal" class="leaderboard-modal">
+        <div class="leaderboard-content">
+            <button class="close-leaderboard" onclick="closeStats()">×</button>
+            <div class="leaderboard-header">
+                <h2 class="leaderboard-title">📈 Your Statistics</h2>
+                <p class="leaderboard-subtitle">Negotiation performance overview</p>
+            </div>
+            <div class="stats-panel">
+                <div class="stats-grid" id="stats-grid">
+                    <!-- Stats will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VR Overlay Elements -->
+    <div class="vr-overlay">
+        <div class="floating-ui floating-tip">
+            💡 Tip: Use "uncle" or "chettan" for respect points!
+        </div>
+        <div class="floating-ui floating-cultural">
+            🇮🇳 Try Malayalam phrases for cultural bonus!
+        </div>
+        <div class="floating-ui floating-negotiation">
+            🤝 Be polite but persistent for better deals!
+        </div>
+    </div>
+
+    <!-- Enhanced Player Input Section -->
+    <style>
+        .enhanced-input-section {
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .voice-input-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .voice-input-btn.listening {
+            background: #27ae60;
+            animation: pulse 1s infinite;
+        }
+        
+        .voice-input-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+        
+        .cultural-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .cultural-chip {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cultural-chip:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+        
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .achievement-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .achievement-card.unlocked {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #2c3e50;
+            border-color: #FFD700;
+        }
+        
+        .achievement-card.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+        
+        .achievement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .achievement-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .achievement-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .achievement-desc {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+    </style>
+
+    <!-- Scripts -->
+    <script src="js/ai-service.js"></script>
+    <script src="js/advanced-driver-ai.js"></script>
+    <script src="js/locations.js"></script>
+    <script src="js/phrases.js"></script>
+    <script src="js/game-features.js"></script>
+    <script src="js/game.js"></script>
+    
+    <!-- Enhanced Game Integration -->
+    <script>
+        // Global game feature functions for UI
+        function showAchievements() {
+            if (window.gameFeatures) {
+                populateAchievements();
+                document.getElementById('achievements-modal').classList.add('show');
+            }
+        }
+        
+        function closeAchievements() {
+            document.getElementById('achievements-modal').classList.remove('show');
+        }
+        
+        function showLeaderboard() {
+            if (window.gameFeatures) {
+                populateLeaderboard();
+                document.getElementById('leaderboard-modal').classList.add('show');
+            }
+        }
+        
+        function closeLeaderboard() {
+            document.getElementById('leaderboard-modal').classList.remove('show');
+        }
+        
+        function showStats() {
+            if (window.gameFeatures) {
+                populateStats();
+                document.getElementById('stats-modal').classList.add('show');
+            }
+        }
+        
+        function closeStats() {
+            document.getElementById('stats-modal').classList.remove('show');
+        }
+        
+        function showReputationDetails() {
+            showStats();
+        }
+        
+        function startTutorial() {
+            if (window.gameFeatures && window.gameFeatures.tutorialSystem) {
+                window.gameFeatures.tutorialSystem.restartTutorial();
+            } else {
+                console.error('Tutorial system not available');
+            }
+        }
+        
+        function populateAchievements() {
+            const achievementsList = document.getElementById('achievements-list');
+            const achievements = window.gameFeatures.achievements.achievements;
+            
+            achievementsList.innerHTML = Object.keys(achievements).map(key => {
+                const achievement = achievements[key];
+                return `
+                    <div class="achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'}">
+                        <span class="achievement-icon">${achievement.icon}</span>
+                        <div class="achievement-name">${achievement.name}</div>
+                        <div class="achievement-desc">${achievement.description}</div>
+                        ${achievement.unlocked ? '<div style="margin-top: 10px; color: #27ae60; font-weight: bold;">✓ Unlocked</div>' : '<div style="margin-top: 10px; color: #7f8c8d;">🔒 Locked</div>'}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function populateLeaderboard() {
+            const leaderboardList = document.getElementById('leaderboard-list');
+            const topScores = window.gameFeatures.leaderboard.getTopScores(10);
+            
+            leaderboardList.innerHTML = topScores.map((entry, index) => `
+                <li class="leaderboard-item ${entry.isPlayer ? 'player-entry' : ''}">
+                    <span class="leaderboard-rank ${index < 3 ? 'top-3' : ''}">${index + 1}</span>
+                    <div class="leaderboard-info">
+                        <div class="leaderboard-name">${entry.name}</div>
+                        <div class="leaderboard-details">${entry.location} • Saved ₹${entry.savings}</div>
+                    </div>
+                    <span class="leaderboard-score">${entry.score}</span>
+                </li>
+            `).join('');
+        }
+        
+        function populateStats() {
+            const statsGrid = document.getElementById('stats-grid');
+            const stats = window.gameFeatures.analytics.stats;
+            const reputation = window.gameFeatures.reputationSystem.reputation;
+            
+            statsGrid.innerHTML = `
+                <div class="stat-item">
+                    <span class="stat-value">${stats.totalNegotiations}</span>
+                    <span class="stat-label">Total Negotiations</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">${window.gameFeatures.analytics.getSuccessRate()}%</span>
+                    <span class="stat-label">Success Rate</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">₹${stats.totalSavings}</span>
+                    <span class="stat-label">Total Savings</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">${stats.malayalamWordsUsed}</span>
+                    <span class="stat-label">Malayalam Words Used</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">${stats.culturalPointsEarned}</span>
+                    <span class="stat-label">Cultural Points</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">${Math.round(reputation.overall)}</span>
+                    <span class="stat-label">Reputation Score</span>
+                </div>
+            `;
+        }
+        
+        // Initialize enhanced features when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait for game features to load
+            setTimeout(() => {
+                try {
+                    window.gameFeatures = new GameFeatures();
+                    console.log('🎮 Enhanced game features loaded successfully!');
+                    
+                    // Setup enhanced UI event listeners
+                    document.getElementById('sound-toggle').addEventListener('click', () => {
+                        window.gameFeatures.soundManager.toggle();
+                    });
+                    
+                    document.getElementById('shortcuts-toggle').addEventListener('click', () => {
+                        const shortcuts = document.getElementById('keyboard-shortcuts');
+                        shortcuts.classList.toggle('show');
+                    });
+                    
+                    document.getElementById('achievements-btn').addEventListener('click', showAchievements);
+                    document.getElementById('leaderboard-btn').addEventListener('click', showLeaderboard);
+                    document.getElementById('tutorial-btn').addEventListener('click', startTutorial);
+                    
+                    document.getElementById('voice-toggle').addEventListener('click', () => {
+                        if (window.gameFeatures.recognition) {
+                            window.gameFeatures.recognition.start();
+                        }
+                    });
+                    
+                    // Add cultural suggestion chips
+                    const culturalPhrases = ['uncle', 'chettan', 'namaskaram', 'ayyo', 'chodikalle'];
+                    const suggestionContainer = document.getElementById('suggestion-chips');
+                    if (suggestionContainer) {
+                        culturalPhrases.forEach(phrase => {
+                            const chip = document.createElement('button');
+                            chip.className = 'cultural-chip';
+                            chip.textContent = phrase;
+                            chip.onclick = () => {
+                                const input = document.getElementById('player-input');
+                                if (input) {
+                                    input.value += ' ' + phrase;
+                                    input.focus();
+                                }
+                            };
+                            suggestionContainer.appendChild(chip);
+                        });
+                    }
+                    
+                    // Add voice input button to player input
+                    const playerInputContainer = document.querySelector('.player-input-section');
+                    if (playerInputContainer && window.gameFeatures.recognition) {
+                        const voiceBtn = document.createElement('button');
+                        voiceBtn.className = 'voice-input-btn';
+                        voiceBtn.innerHTML = '🎤';
+                        voiceBtn.title = 'Voice Input';
+                        voiceBtn.onclick = () => {
+                            voiceBtn.classList.add('listening');
+                            window.gameFeatures.recognition.start();
+                            setTimeout(() => voiceBtn.classList.remove('listening'), 3000);
+                        };
+                        
+                        const inputWrapper = document.createElement('div');
+                        inputWrapper.className = 'input-wrapper';
+                        const playerInput = document.getElementById('player-input');
+                        const sendBtn = document.getElementById('send-btn');
+                        
+                        playerInput.parentNode.insertBefore(inputWrapper, playerInput);
+                        inputWrapper.appendChild(playerInput);
+                        inputWrapper.appendChild(voiceBtn);
+                        inputWrapper.appendChild(sendBtn);
+                    }
+                    
+                } catch (error) {
+                    console.error('Failed to initialize enhanced features:', error);
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html> 

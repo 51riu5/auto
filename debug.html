@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Auto-Rickshaw Simulator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .debug-section {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .info { color: blue; }
+        pre { background: #f8f8f8; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #007acc;
+            color: white;
+        }
+        button:hover { background: #0056a3; }
+    </style>
+</head>
+<body>
+    <h1>🛺 Auto-Rickshaw Simulator - Debug Page</h1>
+    
+    <div class="debug-section">
+        <h2>1. Script Loading Status</h2>
+        <div id="script-status">Checking...</div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>2. LOCATIONS Object</h2>
+        <div id="locations-status">Checking...</div>
+        <pre id="locations-data"></pre>
+    </div>
+    
+    <div class="debug-section">
+        <h2>3. Game Initialization Test</h2>
+        <div id="game-status">Not started</div>
+        <button onclick="testGameInit()">Test Game Initialization</button>
+        <button onclick="testLocationSelection()">Test Location Selection</button>
+        <button onclick="testPricing()">Test Pricing</button>
+    </div>
+    
+    <div class="debug-section">
+        <h2>4. Console Logs</h2>
+        <div id="console-logs" style="background: #f8f8f8; padding: 10px; border-radius: 5px; max-height: 300px; overflow-y: auto;"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>5. Quick Fix</h2>
+        <button onclick="window.location.href='index.html'">Go to Main App</button>
+        <button onclick="location.reload()">Reload Debug Page</button>
+    </div>
+
+    <!-- Load the same scripts as main app -->
+    <script src="js/ai-service.js"></script>
+    <script src="js/advanced-driver-ai.js"></script>
+    <script src="js/locations.js"></script>
+    <script src="js/phrases.js"></script>
+    
+    <script>
+        // Capture console logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const logs = [];
+        
+        function addLog(type, ...args) {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push(`[${timestamp}] ${type.toUpperCase()}: ${args.join(' ')}`);
+            updateConsoleLogs();
+        }
+        
+        console.log = (...args) => {
+            originalLog(...args);
+            addLog('log', ...args);
+        };
+        
+        console.error = (...args) => {
+            originalError(...args);
+            addLog('error', ...args);
+        };
+        
+        console.warn = (...args) => {
+            originalWarn(...args);
+            addLog('warn', ...args);
+        };
+        
+        function updateConsoleLogs() {
+            document.getElementById('console-logs').innerHTML = logs.slice(-10).join('<br>');
+        }
+        
+        // Check script loading
+        function checkScriptStatus() {
+            const status = document.getElementById('script-status');
+            let html = '';
+            
+            const checks = [
+                { name: 'LOCATIONS', obj: typeof LOCATIONS !== 'undefined' && LOCATIONS },
+                { name: 'DRIVER_PHRASES', obj: typeof DRIVER_PHRASES !== 'undefined' && DRIVER_PHRASES },
+                { name: 'AIService', obj: typeof AIService !== 'undefined' },
+                { name: 'AdvancedDriverAI', obj: typeof AdvancedDriverAI !== 'undefined' }
+            ];
+            
+            checks.forEach(check => {
+                const status = check.obj ? 'success' : 'error';
+                const symbol = check.obj ? '✅' : '❌';
+                html += `<div class="${status}">${symbol} ${check.name}: ${check.obj ? 'Loaded' : 'Not Found'}</div>`;
+            });
+            
+            status.innerHTML = html;
+        }
+        
+        // Check LOCATIONS object
+        function checkLocations() {
+            const statusDiv = document.getElementById('locations-status');
+            const dataDiv = document.getElementById('locations-data');
+            
+            if (typeof LOCATIONS === 'undefined') {
+                statusDiv.innerHTML = '<span class="error">❌ LOCATIONS object not found!</span>';
+                dataDiv.textContent = 'LOCATIONS is undefined';
+                return;
+            }
+            
+            const locationKeys = Object.keys(LOCATIONS);
+            statusDiv.innerHTML = `<span class="success">✅ LOCATIONS loaded with ${locationKeys.length} locations</span>`;
+            
+            // Show basic info about each location
+            let info = 'Available Locations:\n';
+            locationKeys.forEach(key => {
+                const loc = LOCATIONS[key];
+                info += `\n${key}: ${loc.name} (Fair Price: ₹${loc.fairPrice}, Multiplier: ${loc.initialMultiplier})\n`;
+            });
+            
+            dataDiv.textContent = info;
+        }
+        
+        // Test game initialization
+        function testGameInit() {
+            const statusDiv = document.getElementById('game-status');
+            
+            try {
+                // Simulate basic game initialization
+                if (typeof LOCATIONS === 'undefined') {
+                    throw new Error('LOCATIONS not loaded');
+                }
+                
+                console.log('Testing game initialization...');
+                statusDiv.innerHTML = '<span class="success">✅ Basic checks passed</span>';
+                
+                // Test location access
+                const testLocation = LOCATIONS.uncle;
+                if (!testLocation) {
+                    throw new Error('Test location (uncle) not found');
+                }
+                
+                const fairPrice = testLocation.fairPrice;
+                const initialPrice = Math.round(fairPrice * testLocation.initialMultiplier);
+                
+                console.log('Test pricing:', { fairPrice, initialPrice });
+                statusDiv.innerHTML += `<br><span class="info">Test pricing: ₹${fairPrice} → ₹${initialPrice}</span>`;
+                
+            } catch (error) {
+                console.error('Game init test failed:', error);
+                statusDiv.innerHTML = `<span class="error">❌ Test failed: ${error.message}</span>`;
+            }
+        }
+        
+        // Test location selection
+        function testLocationSelection() {
+            const statusDiv = document.getElementById('game-status');
+            
+            try {
+                const locationId = 'uncle';
+                console.log('Testing location selection:', locationId);
+                
+                if (!LOCATIONS || !LOCATIONS[locationId]) {
+                    throw new Error(`Location ${locationId} not found`);
+                }
+                
+                const location = LOCATIONS[locationId];
+                console.log('Selected location:', location.name);
+                statusDiv.innerHTML += `<br><span class="success">✅ Location selection test passed: ${location.name}</span>`;
+                
+            } catch (error) {
+                console.error('Location selection test failed:', error);
+                statusDiv.innerHTML += `<br><span class="error">❌ Location test failed: ${error.message}</span>`;
+            }
+        }
+        
+        // Test pricing calculations
+        function testPricing() {
+            const statusDiv = document.getElementById('game-status');
+            
+            try {
+                console.log('Testing pricing calculations...');
+                
+                Object.keys(LOCATIONS).forEach(key => {
+                    const loc = LOCATIONS[key];
+                    const fairPrice = loc.fairPrice;
+                    const initialPrice = Math.round(fairPrice * loc.initialMultiplier);
+                    
+                    if (!fairPrice || fairPrice <= 0) {
+                        throw new Error(`Invalid fair price for ${key}: ${fairPrice}`);
+                    }
+                    
+                    console.log(`${key}: ₹${fairPrice} → ₹${initialPrice}`);
+                });
+                
+                statusDiv.innerHTML += '<br><span class="success">✅ All pricing calculations valid</span>';
+                
+            } catch (error) {
+                console.error('Pricing test failed:', error);
+                statusDiv.innerHTML += `<br><span class="error">❌ Pricing test failed: ${error.message}</span>`;
+            }
+        }
+        
+        // Run checks on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                checkScriptStatus();
+                checkLocations();
+                console.log('Debug page loaded and checks completed');
+            }, 100);
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,55 @@
+{
+  "name": "auto-rickshaw-negotiation-simulator",
+  "version": "1.0.0",
+  "description": "A VR experience for practicing auto-rickshaw fare negotiation in Kerala",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "dev": "npx live-server --port=8080 --open=/index.html",
+    "build": "echo 'No build process needed for static HTML/JS project'",
+    "test": "echo 'No tests configured yet'"
+  },
+  "keywords": [
+    "vr",
+    "webvr",
+    "aframe",
+    "kerala",
+    "auto-rickshaw",
+    "negotiation",
+    "cultural-simulation",
+    "malayalam",
+    "game",
+    "education"
+  ],
+  "author": "Auto-Rickshaw Simulator Team",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "homepage": ".",
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 11"
+  ],
+  "webxr": {
+    "supported": true,
+    "devices": [
+      "oculus-quest",
+      "oculus-rift",
+      "htc-vive",
+      "windows-mixed-reality",
+      "mobile-vr"
+    ]
+  }
+} 
