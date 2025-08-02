@@ -148,54 +148,107 @@
         
         <!-- Assets -->
         <a-assets>
-            <a-mixin id="auto-rickshaw" 
-                geometry="primitive: box; width: 2; height: 1.5; depth: 3"
-                material="color: #FFD700; metalness: 0.1"></a-mixin>
-            
-            <a-mixin id="driver" 
-                geometry="primitive: sphere; radius: 0.3"
-                material="color: #8B4513"></a-mixin>
-                
-            <a-mixin id="wheel"
-                geometry="primitive: cylinder; radius: 0.3; height: 0.1"
-                material="color: #2F2F2F"></a-mixin>
+            <!-- Textures for more realistic look -->
+            <img id="autoTexture" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojRkZENzAwO3N0b3Atb3BhY2l0eToxIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNGRkE1MDA7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0idXJsKCNncmFkaWVudCkiLz4KICA8dGV4dCB4PSIxMjgiIHk9IjEzMCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjMzMzIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5BVVRPIFJJQ0tTSEFXPC90ZXh0Pgo8L3N2Zz4K">
+            <img id="roadTexture" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iIzMzMzMzMyIvPgogIDxyZWN0IHg9IjEyMCIgeT0iMCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iI0ZGRkZGRiIgb3BhY2l0eT0iMC44Ii8+CiAgPHJlY3QgeD0iNjAiIHk9IjAiIHdpZHRoPSI4IiBoZWlnaHQ9IjI1NiIgZmlsbD0iI0ZGRkZGRiIgb3BhY2l0eT0iMC40Ii8+CiAgPHJlY3QgeD0iMTk2IiB5PSIwIiB3aWR0aD0iOCIgaGVpZ2h0PSIyNTYiIGZpbGw9IiNGRkZGRkYiIG9wYWNpdHk9IjAuNCIvPgo8L3N2Zz4K">
+            <img id="buildingTexture" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iI0VFRUVFRSIvPgogIDxnIGZpbGw9IiMzMzMzMzMiIG9wYWNpdHk9IjAuMiI+CiAgICA8cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSIzMCIgaGVpZ2h0PSI0MCIvPgogICAgPHJlY3QgeD0iNzAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iNDAiLz4KICAgIDxyZWN0IHg9IjEyMCIgeT0iMjAiIHdpZHRoPSIzMCIgaGVpZ2h0PSI0MCIvPgogICAgPHJlY3QgeD0iMjAiIHk9IjgwIiB3aWR0aD0iMzAiIGhlaWdodD0iNDAiLz4KICA8L2c+Cjwvc3ZnPgo=">
         </a-assets>
 
-        <!-- Environment -->
+        <!-- Kerala Street Environment -->
         <a-entity id="environment" 
-            environment="preset: forest; groundColor: #445; grid: cross"></a-entity>
+            environment="preset: none; groundColor: #8B7355; skyColor: #87CEEB; lighting: distant"></a-entity>
 
-        <!-- Auto-rickshaw -->
-        <a-entity id="auto-rickshaw" position="0 0.75 -3">
-            <!-- Main body -->
-            <a-box mixin="auto-rickshaw" position="0 0 0"></a-box>
+        <!-- Road -->
+        <a-plane position="0 0.01 0" rotation="-90 0 0" width="50" height="100" 
+            material="src: #roadTexture; repeat: 10 20"></a-plane>
+
+        <!-- Kerala Auto-Rickshaw (More Detailed) -->
+        <a-entity id="auto-rickshaw" position="0 0.5 -4" rotation="0 0 0">
+            <!-- Main Body (Yellow & Green) -->
+            <a-box position="0 0.5 0" 
+                geometry="primitive: box; width: 1.8; height: 1.2; depth: 2.8"
+                material="src: #autoTexture"></a-box>
             
-            <!-- Wheels -->
-            <a-cylinder mixin="wheel" position="-0.8 -0.6 1" rotation="90 0 0"></a-cylinder>
-            <a-cylinder mixin="wheel" position="0.8 -0.6 1" rotation="90 0 0"></a-cylinder>
-            <a-cylinder mixin="wheel" position="0 -0.6 -1.2" rotation="90 0 0"></a-cylinder>
+            <!-- Front Section -->
+            <a-box position="0 0.3 1.5" 
+                geometry="primitive: box; width: 1.6; height: 0.8; depth: 0.4"
+                material="color: #28a745"></a-box>
+                
+            <!-- Roof (Canvas Style) -->
+            <a-box position="0 1.2 -0.2" 
+                geometry="primitive: box; width: 2.0; height: 0.05; depth: 2.4" 
+                material="color: #333333"></a-box>
             
-            <!-- Driver -->
-            <a-sphere id="driver" mixin="driver" position="-0.5 0.5 0.5">
-                <!-- Eyes -->
-                <a-sphere position="-0.1 0.1 0.25" geometry="primitive: sphere; radius: 0.05" material="color: white"></a-sphere>
-                <a-sphere position="0.1 0.1 0.25" geometry="primitive: sphere; radius: 0.05" material="color: white"></a-sphere>
-                <a-sphere position="-0.1 0.1 0.28" geometry="primitive: sphere; radius: 0.02" material="color: black"></a-sphere>
-                <a-sphere position="0.1 0.1 0.28" geometry="primitive: sphere; radius: 0.02" material="color: black"></a-sphere>
-            </a-sphere>
+            <!-- Roof Support Poles -->
+            <a-cylinder position="-0.8 0.8 -1" radius="0.02" height="0.8" material="color: #333"></a-cylinder>
+            <a-cylinder position="0.8 0.8 -1" radius="0.02" height="0.8" material="color: #333"></a-cylinder>
+            <a-cylinder position="-0.8 0.8 1" radius="0.02" height="0.8" material="color: #333"></a-cylinder>
+            <a-cylinder position="0.8 0.8 1" radius="0.02" height="0.8" material="color: #333"></a-cylinder>
             
-            <!-- Roof -->
-            <a-box position="0 0.8 0" geometry="primitive: box; width: 2.2; height: 0.1; depth: 3.2" 
-                material="color: #FFD700; metalness: 0.1"></a-box>
+            <!-- Three Wheels -->
+            <a-cylinder position="-0.7 -0.1 1.2" rotation="90 0 0" radius="0.35" height="0.15" 
+                material="color: #1a1a1a"></a-cylinder>
+            <a-cylinder position="0.7 -0.1 1.2" rotation="90 0 0" radius="0.35" height="0.15" 
+                material="color: #1a1a1a"></a-cylinder>
+            <a-cylinder position="0 -0.1 -1.3" rotation="90 0 0" radius="0.35" height="0.15" 
+                material="color: #1a1a1a"></a-cylinder>
+            
+            <!-- Driver (More Detailed) -->
+            <a-entity id="driver" position="-0.4 0.7 0.3">
+                <!-- Head -->
+                <a-sphere radius="0.25" material="color: #D2B48C"></a-sphere>
+                <!-- Body -->
+                <a-cylinder position="0 -0.4 0" radius="0.2" height="0.6" material="color: #4169E1"></a-cylinder>
+                <!-- Arms -->
+                <a-cylinder position="-0.3 -0.2 0" rotation="0 0 45" radius="0.05" height="0.4" material="color: #D2B48C"></a-cylinder>
+                <a-cylinder position="0.3 -0.2 0" rotation="0 0 -45" radius="0.05" height="0.4" material="color: #D2B48C"></a-cylinder>
+                <!-- Steering -->
+                <a-torus position="0.15 -0.1 0.2" radius="0.15" radius-tubular="0.02" material="color: #333"></a-torus>
+            </a-entity>
+            
+            <!-- Headlight -->
+            <a-sphere position="0 0.4 1.8" radius="0.1" material="color: #FFFFAA; emissive: #FFFF88"></a-sphere>
+            
+            <!-- License Plate -->
+            <a-plane position="0 0.1 1.9" width="0.6" height="0.2" 
+                material="color: white" text="value: KL 07 AUTO; align: center; color: black; width: 8"></a-plane>
         </a-entity>
 
-        <!-- Background buildings -->
-        <a-box position="-10 2 -10" geometry="primitive: box; width: 4; height: 4; depth: 2" 
-            material="color: #ff6b6b"></a-box>
-        <a-box position="15 3 -15" geometry="primitive: box; width: 6; height: 6; depth: 3" 
-            material="color: #4ecdc4"></a-box>
-        <a-box position="-8 1.5 5" geometry="primitive: box; width: 3; height: 3; depth: 2" 
-            material="color: #45b7d1"></a-box>
+        <!-- Kerala Buildings & Environment -->
+        <!-- Traditional Kerala House -->
+        <a-entity position="-12 0 -8">
+            <a-box position="0 1.5 0" geometry="width: 6; height: 3; depth: 4" material="color: #8B4513"></a-box>
+            <a-box position="0 3.2 0" geometry="width: 7; height: 0.2; depth: 5" material="color: #654321"></a-box>
+            <a-plane position="0 0.8 2.1" width="1" height="1.5" material="color: #4169E1"></a-plane>
+        </a-entity>
+        
+        <!-- Modern Building -->
+        <a-box position="15 3 -12" geometry="width: 4; height: 6; depth: 3" 
+            material="src: #buildingTexture"></a-box>
+            
+        <!-- Coconut Trees -->
+        <a-entity position="-8 0 2">
+            <a-cylinder position="0 3 0" radius="0.2" height="6" material="color: #8B4513"></a-cylinder>
+            <a-sphere position="0 6 0" radius="1.5" material="color: #228B22"></a-sphere>
+        </a-entity>
+        
+        <a-entity position="10 0 3">
+            <a-cylinder position="0 4 0" radius="0.15" height="8" material="color: #8B4513"></a-cylinder>
+            <a-sphere position="0 8 0" radius="1.2" material="color: #228B22"></a-sphere>
+        </a-entity>
+        
+        <!-- Street Vendors -->
+        <a-entity position="5 0 -2">
+            <a-box geometry="width: 1; height: 0.8; depth: 0.5" material="color: #8B4513"></a-box>
+            <a-box position="0 0.9 0" geometry="width: 1.2; height: 0.1; depth: 0.7" material="color: #FF6347"></a-box>
+        </a-entity>
+        
+        <!-- Bus Stop -->
+        <a-entity position="-5 0 -3">
+            <a-box geometry="width: 3; height: 2.5; depth: 1" material="color: #4682B4; opacity: 0.8"></a-box>
+            <a-plane position="0 1.8 0.6" width="2.5" height="0.4" material="color: white" 
+                text="value: BUS STOP; align: center; color: blue; width: 6"></a-plane>
+        </a-entity>
 
         <!-- Lighting -->
         <a-light type="ambient" color="#404040" intensity="0.4"></a-light>
@@ -230,11 +283,25 @@
             <h2>🤖 AI Configuration</h2>
             <p>For the best experience, configure an AI service for dynamic conversations:</p>
             
+            <div class="ai-option" style="border: 3px solid #4CAF50; background: rgba(76, 175, 80, 0.1);">
+                <h3>🌟 BEST: Google Gemini Pro (Recommended)</h3>
+                <input type="text" id="gemini-key" placeholder="Enter your Gemini API key">
+                <button onclick="configureAI('gemini')" style="background: #4CAF50;">Use Gemini Pro</button>
+                <p class="ai-info">✨ <strong>Highest quality responses!</strong> Get your API key from <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></p>
+            </div>
+            
             <div class="ai-option">
-                <h3>🎯 Recommended: OpenAI (ChatGPT)</h3>
+                <h3>🎯 Alternative: OpenAI (ChatGPT)</h3>
                 <input type="text" id="openai-key" placeholder="Enter your OpenAI API key">
                 <button onclick="configureAI('openai')">Use OpenAI</button>
                 <p class="ai-info">Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></p>
+            </div>
+            
+            <div class="ai-option">
+                <h3>🧠 Alternative: Anthropic Claude</h3>
+                <input type="text" id="anthropic-key" placeholder="Enter your Anthropic API key">
+                <button onclick="configureAI('anthropic')">Use Claude</button>
+                <p class="ai-info">Get your API key from <a href="https://console.anthropic.com/" target="_blank">Anthropic Console</a></p>
             </div>
             
             <div class="ai-option">

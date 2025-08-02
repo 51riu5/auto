@@ -4,16 +4,26 @@ The Auto-Rickshaw Negotiation Simulator now features **AI-powered dynamic conver
 
 ## 🚀 Quick Start Options
 
-### Option 1: OpenAI (Recommended) 🎯
-**Best experience with GPT-3.5/GPT-4**
+### Option 1: Google Gemini Pro (BEST) 🌟
+**Highest quality responses with Google's most advanced AI**
+
+1. Get a FREE API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. When you first run the app, select "Google Gemini Pro" and enter your API key
+3. Experience the most natural, culturally-aware conversations!
+
+**Cost**: FREE tier with generous limits! Much more affordable than OpenAI.
+**Quality**: Superior responses with better Kerala cultural understanding.
+
+### Option 2: OpenAI (Alternative) 🎯
+**Good experience with GPT-3.5/GPT-4**
 
 1. Get an API key from [OpenAI Platform](https://platform.openai.com/api-keys)
 2. When you first run the app, enter your API key in the configuration modal
 3. Enjoy natural, dynamic conversations!
 
-**Cost**: ~$0.002 per conversation (very affordable)
+**Cost**: ~$0.002 per conversation (affordable but paid)
 
-### Option 2: Local AI (Ollama) 🏠
+### Option 3: Local AI (Ollama) 🏠
 **Free and private - runs on your computer**
 
 1. Install [Ollama](https://ollama.ai/)

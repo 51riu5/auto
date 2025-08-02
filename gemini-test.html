@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 Gemini Pro Integration Test - Auto-Rickshaw VR</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/enhanced-features.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gemini-config {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        
+        .test-input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        .test-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .test-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .response-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #4CAF50;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .error-box {
+            background: rgba(244, 67, 54, 0.2);
+            border: 2px solid #f44336;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #ffcdd2;
+        }
+        
+        .success-box {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #c8e6c9;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .scenario-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .scenario-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🌟 Gemini Pro Integration Test</h1>
+        <p>Test your Google Gemini Pro API integration for the Auto-Rickshaw Negotiation Simulator!</p>
+        
+        <div class="gemini-config">
+            <h2>🔑 Gemini Pro Configuration</h2>
+            <p>Enter your Google Gemini API key to test high-quality AI responses:</p>
+            
+            <input type="password" id="gemini-api-key" class="test-input" placeholder="Enter your Gemini API key (starts with 'AIza...')">
+            
+            <div style="margin: 15px 0;">
+                <button class="test-button" onclick="testGeminiConnection()">🧪 Test Connection</button>
+                <button class="test-button" onclick="clearResults()">🗑️ Clear Results</button>
+            </div>
+            
+            <p style="font-size: 14px; opacity: 0.8;">
+                📋 Get your API key from: <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: #81C784;">Google AI Studio</a>
+            </p>
+        </div>
+        
+        <div class="test-container">
+            <h2>💬 Test Conversation Scenarios</h2>
+            <p>Try these typical negotiation scenarios to see Gemini's responses:</p>
+            
+            <div class="scenario-grid">
+                <button class="scenario-btn" onclick="testScenario('Uncle, please 50 rupees too much')">
+                    😊 Polite Request<br>
+                    <small>"Uncle, please 50 rupees too much"</small>
+                </button>
+                
+                <button class="scenario-btn" onclick="testScenario('I will find another auto')">
+                    😤 Threat to Leave<br>
+                    <small>"I will find another auto"</small>
+                </button>
+                
+                <button class="scenario-btn" onclick="testScenario('Nice auto chettan, very clean')">
+                    🎉 Compliment<br>
+                    <small>"Nice auto chettan, very clean"</small>
+                </button>
+                
+                <button class="scenario-btn" onclick="testScenario('I am local student, no money')">
+                    🎓 Student Appeal<br>
+                    <small>"I am local student, no money"</small>
+                </button>
+                
+                <button class="scenario-btn" onclick="testScenario('Petrol price not so high now')">
+                    ⛽ Price Logic<br>
+                    <small>"Petrol price not so high now"</small>
+                </button>
+                
+                <button class="scenario-btn" onclick="testScenario('This is Onam time, be kind uncle')">
+                    🎊 Cultural Reference<br>
+                    <small>"This is Onam time, be kind uncle"</small>
+                </button>
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <h3>🎯 Custom Test Message:</h3>
+                <input type="text" id="custom-message" class="test-input" placeholder="Type your own negotiation message...">
+                <button class="test-button" onclick="testCustomMessage()">🚀 Test Custom Message</button>
+            </div>
+        </div>
+        
+        <div class="test-container">
+            <h2>📊 Test Results</h2>
+            <div id="test-results">
+                <p style="opacity: 0.7;">No tests run yet. Configure your API key and try some scenarios!</p>
+            </div>
+        </div>
+        
+        <div class="test-container">
+            <h2>📋 What to Look For</h2>
+            <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px;">
+                <h3>✅ Good Gemini Responses Should:</h3>
+                <ul>
+                    <li><strong>Reference your exact words</strong> - "You said uncle so respectfully..."</li>
+                    <li><strong>Show emotional reactions</strong> - Getting pleased, frustrated, or amused</li>
+                    <li><strong>Use Kerala culture</strong> - Malayalam words, local references</li>
+                    <li><strong>Be conversational</strong> - Not robotic or template-like</li>
+                    <li><strong>Include price negotiation</strong> - Actual rupee amounts</li>
+                    <li><strong>Feel authentic</strong> - Like talking to a real auto driver</li>
+                </ul>
+                
+                <h3>❌ Signs of Problems:</h3>
+                <ul>
+                    <li>Generic responses that don't mention your words</li>
+                    <li>No emotional reactions or personality</li>
+                    <li>Missing cultural elements</li>
+                    <li>Robotic or formal language</li>
+                    <li>No price mentions or negotiations</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load the AI service -->
+    <script src="js/ai-service.js"></script>
+    <script src="js/locations.js"></script>
+    
+    <script>
+        let aiService;
+        let testCount = 0;
+        
+        // Initialize AI service
+        document.addEventListener('DOMContentLoaded', () => {
+            aiService = new AIService();
+            console.log('✅ Gemini test page loaded');
+        });
+        
+        async function testGeminiConnection() {
+            const apiKey = document.getElementById('gemini-api-key').value.trim();
+            
+            if (!apiKey) {
+                showError('Please enter your Gemini API key first!');
+                return;
+            }
+            
+            if (!apiKey.startsWith('AIza')) {
+                showError('Gemini API keys usually start with "AIza". Please check your key.');
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                // Configure AI service
+                aiService.initialize(apiKey, 'gemini');
+                
+                // Test with a simple request
+                const testResponse = await aiService.callGemini([
+                    { role: 'system', content: 'You are an auto-rickshaw driver in Kerala. Respond briefly.' },
+                    { role: 'user', content: 'Hello uncle, how much to MG Road?' }
+                ]);
+                
+                showSuccess(`🎉 Gemini Pro Connection Successful!\n\nProvider: ${testResponse.provider}\nResponse: "${testResponse.text}"\n\nYou're ready to test negotiation scenarios!`);
+                
+            } catch (error) {
+                console.error('Gemini test error:', error);
+                showError(`❌ Connection Failed: ${error.message}\n\nPlease check:\n- API key is correct\n- You have Gemini Pro access\n- Internet connection is working`);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        async function testScenario(message) {
+            const apiKey = document.getElementById('gemini-api-key').value.trim();
+            
+            if (!apiKey) {
+                showError('Please configure your Gemini API key first!');
+                return;
+            }
+            
+            testCount++;
+            const testId = `test-${testCount}`;
+            
+            addTestResult(`🧪 Test ${testCount}: "${message}"\n⏳ Testing...`, 'loading');
+            
+            try {
+                aiService.initialize(apiKey, 'gemini');
+                
+                // Create realistic context
+                const context = {
+                    currentPrice: 80,
+                    fairPrice: 60,
+                    initialPrice: 100,
+                    mood: 'neutral',
+                    round: 2,
+                    maxRounds: 8,
+                    culturalPoints: 0
+                };
+                
+                const driverProfile = {
+                    location: 'Kochi MG Road',
+                    difficulty: 'medium',
+                    personality: {
+                        patience: 0.7,
+                        humor: 0.6,
+                        localKnowledge: 0.8,
+                        greediness: 0.5
+                    }
+                };
+                
+                const response = await aiService.generateDriverResponse(context, message, driverProfile);
+                
+                updateTestResult(testId, `✅ Test ${testCount}: "${message}"\n\n🤖 Gemini Response (${response.provider}):\n"${response.text}"\n\n⭐ Quality Check:\n${analyzeResponse(response.text, message)}`);
+                
+            } catch (error) {
+                updateTestResult(testId, `❌ Test ${testCount} Failed: "${message}"\n\nError: ${error.message}`);
+            }
+        }
+        
+        async function testCustomMessage() {
+            const message = document.getElementById('custom-message').value.trim();
+            
+            if (!message) {
+                showError('Please enter a custom message to test!');
+                return;
+            }
+            
+            await testScenario(message);
+            document.getElementById('custom-message').value = '';
+        }
+        
+        function analyzeResponse(response, input) {
+            const analysis = [];
+            const lowerResponse = response.toLowerCase();
+            const lowerInput = input.toLowerCase();
+            
+            // Check if response references input
+            const inputWords = lowerInput.split(' ').filter(w => w.length > 3);
+            const referencesInput = inputWords.some(word => lowerResponse.includes(word));
+            
+            if (referencesInput) {
+                analysis.push('✅ References your words');
+            } else {
+                analysis.push('❌ Does not reference your input');
+            }
+            
+            // Check for emotional reactions
+            const emotions = ['ayyo', 'okay okay', 'wait wait', 'arre', 'ha!', 'thank you'];
+            if (emotions.some(e => lowerResponse.includes(e))) {
+                analysis.push('✅ Shows emotional reactions');
+            }
+            
+            // Check for cultural elements
+            const cultural = ['uncle', 'chettan', 'saar', 'boss', 'malayalam', 'kerala', 'onam'];
+            if (cultural.some(c => lowerResponse.includes(c))) {
+                analysis.push('✅ Uses cultural elements');
+            }
+            
+            // Check for price negotiation
+            if (lowerResponse.includes('₹') || lowerResponse.includes('rupees')) {
+                analysis.push('✅ Includes price negotiation');
+            }
+            
+            // Check for authenticity markers
+            const authentic = ['petrol', 'traffic', 'family', 'student', 'local', 'years'];
+            if (authentic.some(a => lowerResponse.includes(a))) {
+                analysis.push('✅ Authentic details');
+            }
+            
+            return analysis.join('\n');
+        }
+        
+        function showError(message) {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = `<div class="error-box">${message}</div>` + resultsDiv.innerHTML;
+        }
+        
+        function showSuccess(message) {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = `<div class="success-box">${message}</div>` + resultsDiv.innerHTML;
+        }
+        
+        function addTestResult(message, className = '') {
+            const resultsDiv = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `response-box ${className}`;
+            resultDiv.textContent = message;
+            resultDiv.id = `test-${testCount}`;
+            
+            if (resultsDiv.innerHTML.includes('No tests run yet')) {
+                resultsDiv.innerHTML = '';
+            }
+            
+            resultsDiv.insertBefore(resultDiv, resultsDiv.firstChild);
+        }
+        
+        function updateTestResult(testId, message) {
+            const testDiv = document.getElementById(testId);
+            if (testDiv) {
+                testDiv.textContent = message;
+                testDiv.className = 'response-box';
+            }
+        }
+        
+        function showLoading(show) {
+            const buttons = document.querySelectorAll('.test-button, .scenario-btn');
+            buttons.forEach(btn => {
+                btn.disabled = show;
+                if (show) {
+                    btn.style.opacity = '0.6';
+                } else {
+                    btn.style.opacity = '1';
+                }
+            });
+        }
+        
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = '<p style="opacity: 0.7;">Results cleared. Ready for new tests!</p>';
+            testCount = 0;
+        }
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.id === 'custom-message') {
+                testCustomMessage();
+            }
+        });
+        
+        console.log('🌟 Gemini Pro Test Page Ready!');
+        console.log('📋 Available functions:');
+        console.log('- testGeminiConnection() - Test API connection');
+        console.log('- testScenario(message) - Test specific message');
+        console.log('- clearResults() - Clear all test results');
+    </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Gemini API Debug Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        .debug-container {
+            background: #2d2d2d;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #444;
+        }
+        
+        .input-group {
+            margin: 15px 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ccc;
+            font-weight: bold;
+        }
+        
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        
+        .log-container {
+            background: #000;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+        
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        .info { color: #2196F3; }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status.success { background: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50; }
+        .status.error { background: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; }
+        .status.warning { background: rgba(255, 152, 0, 0.2); border: 1px solid #ff9800; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Gemini API Debug Tool</h1>
+    <p>Use this tool to debug issues with the Gemini API integration.</p>
+    
+    <div class="debug-container">
+        <h2>🔑 API Configuration</h2>
+        
+        <div class="input-group">
+            <label for="api-key">Gemini API Key:</label>
+            <input type="password" id="api-key" placeholder="AIza...">
+            <small style="color: #ccc;">Get your key from <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></small>
+        </div>
+        
+        <button onclick="validateKey()">🔍 Validate Key Format</button>
+        <button onclick="testConnection()">🌐 Test Connection</button>
+        <button onclick="testSimpleQuery()">💬 Test Simple Query</button>
+        <button onclick="testAutoRickshawQuery()">🛺 Test Auto-Rickshaw Query</button>
+        <button onclick="clearLog()">🗑️ Clear Log</button>
+    </div>
+    
+    <div class="debug-container">
+        <h2>📊 Status</h2>
+        <div id="status" class="status">Ready to test</div>
+    </div>
+    
+    <div class="debug-container">
+        <h2>📝 Debug Log</h2>
+        <div id="log" class="log-container">
+            <div class="info">[INFO] Debug tool ready. Enter your API key and click a test button.</div>
+        </div>
+    </div>
+    
+    <div class="debug-container">
+        <h2>💡 Common Issues & Solutions</h2>
+        <ul>
+            <li><strong>API Key Issues:</strong>
+                <ul>
+                    <li>Make sure key starts with "AIza"</li>
+                    <li>Key should be from Google AI Studio, not Google Cloud Console</li>
+                    <li>Ensure Generative AI API is enabled</li>
+                </ul>
+            </li>
+            <li><strong>CORS Errors:</strong>
+                <ul>
+                    <li>Make sure you're running on a proper HTTP server (not file://)</li>
+                    <li>Use localhost or 127.0.0.1 for local testing</li>
+                </ul>
+            </li>
+            <li><strong>Safety Filters:</strong>
+                <ul>
+                    <li>Gemini may block some responses due to safety policies</li>
+                    <li>Try different phrasing if responses are blocked</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <script src="js/ai-service.js"></script>
+    <script>
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function setStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+        }
+        
+        function clearLog() {
+            document.getElementById('log').innerHTML = '<div class="info">[INFO] Log cleared.</div>';
+        }
+        
+        function validateKey() {
+            const apiKey = document.getElementById('api-key').value.trim();
+            
+            if (!apiKey) {
+                log('❌ No API key entered', 'error');
+                setStatus('No API key provided', 'error');
+                return false;
+            }
+            
+            if (!apiKey.startsWith('AIza')) {
+                log('⚠️ API key format may be incorrect (should start with "AIza")', 'warning');
+                setStatus('API key format may be incorrect', 'warning');
+                return false;
+            }
+            
+            if (apiKey.length < 35) {
+                log('⚠️ API key seems too short', 'warning');
+                setStatus('API key seems too short', 'warning');
+                return false;
+            }
+            
+            log('✅ API key format looks correct', 'success');
+            setStatus('API key format valid', 'success');
+            return true;
+        }
+        
+        async function testConnection() {
+            if (!validateKey()) return;
+            
+            const apiKey = document.getElementById('api-key').value.trim();
+            
+            log('🌐 Testing basic connection to Gemini API...', 'info');
+            setStatus('Testing connection...', 'info');
+            
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "Hello" }] }]
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log('✅ Connection successful!', 'success');
+                    log(`📥 Response: ${JSON.stringify(data, null, 2)}`, 'info');
+                    setStatus('Connection successful', 'success');
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    log(`❌ Connection failed: ${response.status} - ${response.statusText}`, 'error');
+                    log(`📥 Error details: ${JSON.stringify(errorData, null, 2)}`, 'error');
+                    setStatus(`Connection failed: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Network error: ${error.message}`, 'error');
+                setStatus('Network error', 'error');
+            }
+        }
+        
+        async function testSimpleQuery() {
+            if (!validateKey()) return;
+            
+            const apiKey = document.getElementById('api-key').value.trim();
+            
+            log('💬 Testing simple query...', 'info');
+            setStatus('Testing simple query...', 'info');
+            
+            try {
+                const result = await window.testGeminiAPI(apiKey);
+                log('✅ Simple query successful!', 'success');
+                log(`📥 Response: "${result.text}"`, 'success');
+                setStatus('Simple query successful', 'success');
+            } catch (error) {
+                log(`❌ Simple query failed: ${error.message}`, 'error');
+                setStatus('Simple query failed', 'error');
+            }
+        }
+        
+        async function testAutoRickshawQuery() {
+            if (!validateKey()) return;
+            
+            const apiKey = document.getElementById('api-key').value.trim();
+            
+            log('🛺 Testing auto-rickshaw specific query...', 'info');
+            setStatus('Testing auto-rickshaw query...', 'info');
+            
+            try {
+                const aiService = new AIService();
+                aiService.initialize(apiKey, 'gemini');
+                
+                const context = {
+                    currentPrice: 80,
+                    fairPrice: 60,
+                    initialPrice: 100,
+                    mood: 'neutral',
+                    round: 1,
+                    maxRounds: 8,
+                    culturalPoints: 0
+                };
+                
+                const driverProfile = {
+                    location: 'Kochi MG Road',
+                    difficulty: 'medium',
+                    personality: { patience: 0.7, humor: 0.6, localKnowledge: 0.8, greediness: 0.5 }
+                };
+                
+                const response = await aiService.generateDriverResponse(
+                    context, 
+                    'Uncle, please 50 rupees too much', 
+                    driverProfile
+                );
+                
+                log('✅ Auto-rickshaw query successful!', 'success');
+                log(`📥 Driver response: "${response.text}"`, 'success');
+                log(`🏷️ Provider: ${response.provider}`, 'info');
+                setStatus('Auto-rickshaw query successful', 'success');
+                
+            } catch (error) {
+                log(`❌ Auto-rickshaw query failed: ${error.message}`, 'error');
+                setStatus('Auto-rickshaw query failed', 'error');
+            }
+        }
+        
+        // Add enter key support
+        document.getElementById('api-key').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                validateKey();
+            }
+        });
+        
+        log('🔧 Debug tool loaded. Ready for testing!', 'info');
+    </script>
+</body>
+</html>
